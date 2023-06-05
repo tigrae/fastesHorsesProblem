@@ -109,8 +109,14 @@ class HorseRanking:
                 self.add_faster(horse)
 
     def update_others(self):
-        pass
-
+        # add each slower horse to slower-list of each faster horse
+        for slower_horse in self.slower:
+            for faster_horse in self.faster:
+                horse_rankings[faster_horse].add_slower(slower_horse)
+        # add each faster horse to faster-list of each slower horse
+        for faster_horse in self.faster:
+            for slower_horse in self.slower:
+                horse_rankings[slower_horse].add_faster(faster_horse)
 
 
 def race(horses, racers):
@@ -167,5 +173,10 @@ if __name__ == '__main__':
 
     # Conduct another race using one participant of each race
     race(horses, list(range(0, 25, 5)))
+
+    # Update all horses using the faster and slower lists of each other
+    for i in range(25):
+        horse_rankings[i].update_others()
+
 
     print()
