@@ -11,6 +11,12 @@ Your goal is to design an algorithm that can find the three fastest horses with 
 import random
 import argparse
 import os
+import matplotlib.pyplot as plt
+
+
+def formatted_list(numbers):
+    formatted_numbers = [f"{number:02d}" for number in numbers]
+    return f"[{', '.join(formatted_numbers)}]"
 
 
 def generate_horses():
@@ -63,6 +69,7 @@ class HorseRanking:
 
     def __init__(self, index):
         self.index = index
+        self.complete = False
         self.faster = []
         self.slower = []
 
@@ -107,6 +114,7 @@ class HorseRanking:
                 self.add_slower(horse)
             for horse in race[own_rank+1:]:
                 self.add_faster(horse)
+        self.check_completion()
 
     def update_others(self):
         # add each slower horse to slower-list of each faster horse
@@ -117,6 +125,12 @@ class HorseRanking:
         for faster_horse in self.faster:
             for slower_horse in self.slower:
                 horse_rankings[slower_horse].add_faster(faster_horse)
+
+    def check_completion(self):
+        _progress = self.get_faster() + self.get_slower()
+        if _progress == 24:
+            self.complete = True
+        return _progress
 
 
 def race(horses, racers):
@@ -139,6 +153,22 @@ def race(horses, racers):
 
     # Return the sorted racers list
     return sorted_racers
+
+
+def check_overall_completion():
+    """
+    Checks overall completion over all horses
+    :return: List of completion progress
+    """
+    # update others
+    for i in range(25):
+        horse_rankings[i].update_others()
+    # create empty completion list
+    completion_list = []
+    # fill completion list
+    for horse in range(25):
+        completion_list.append(horse_rankings[horse].check_completion())
+    return completion_list
 
 
 if __name__ == '__main__':
@@ -167,16 +197,19 @@ if __name__ == '__main__':
         _horse_ranking = HorseRanking(i)
         horse_rankings.append(_horse_ranking)
 
-    # Conduct five races with non-overlapping sets of participating horses
+    # Conduct five races with non-overlapping sets of participating horses. Save the middle horse
+    print(formatted_list(check_overall_completion()))
     for i in range(0, 24, 5):
         race(horses, list(range(i, i+5)))
+    print(formatted_list(check_overall_completion()))
 
     # Conduct another race using one participant of each race
     race(horses, list(range(0, 25, 5)))
 
     # Update all horses using the faster and slower lists of each other
-    for i in range(25):
-        horse_rankings[i].update_others()
+    print(formatted_list(check_overall_completion()))
+
+
 
 
     print()
