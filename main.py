@@ -56,11 +56,53 @@ def read_horses_from_file(filename):
     return horses
 
 
+class HorseRanking:
+    """
+    A class depicting which horses are faster or slower that a given horse
+    """
+
+    def __init__(self, index):
+        self.index = index
+        self.faster = []
+        self.slower = []
+
+    def get_faster(self):
+        return len(self.faster)
+
+    def get_slower(self):
+        return len(self.slower)
+
+    def add_faster(self, index):
+        if index == self.index:
+            raise ValueError("A horse cannot be faster than itself.")
+        else:
+            if index not in self.faster:
+                self.faster.append(index)
+
+    def add_slower(self, index):
+        if index == self.index:
+            raise ValueError("A horse cannot be slower than itself.")
+        else:
+            if index not in self.slower:
+                self.slower.append(index)
 
 
+def race(horses, racers):
+    """
+    Get the order in which horses complete the race
+    :param horses: list of all horses
+    :param racers: indices of horses in the race
+    :return: order at which horses finish race
+    """
 
+    if len(racers) != 5:
+        raise ValueError("Exactly 5 horses must take part in a race.")
 
+    # Sort the racers based on their corresponding horse times in ascending order
+    sorted_racers = sorted(racers, key=lambda x: horses[x])
 
+    # Return the sorted racers list
+    return sorted_racers
 
 
 if __name__ == '__main__':
@@ -80,5 +122,13 @@ if __name__ == '__main__':
     else:
         print("Instance found. Reading...")
         horses = read_horses_from_file(filename)
+
+    # Create a list to hold the horse rankings
+    horse_rankings = []
+
+    # create horse ranking
+    for i in range(len(horses)):
+        _horse_ranking = HorseRanking(i)
+        horse_rankings.append(_horse_ranking)
 
 
