@@ -94,7 +94,7 @@ class HorseRanking:
             if index not in self.slower:
                 self.slower.append(index)
 
-    def update_after_race(self, race):
+    def update_self_after_race(self, race):
         """
         Update faster and slower list after a race the horse took part on
         :param race: list of order
@@ -107,6 +107,10 @@ class HorseRanking:
                 self.add_slower(horse)
             for horse in race[own_rank+1:]:
                 self.add_faster(horse)
+
+    def update_others(self):
+        pass
+
 
 
 def race(horses, racers):
@@ -125,7 +129,7 @@ def race(horses, racers):
 
     # update ranks
     for horse in racers:
-        horse_rankings[horse].update_after_race(sorted_racers)
+        horse_rankings[horse].update_self_after_race(sorted_racers)
 
     # Return the sorted racers list
     return sorted_racers
@@ -158,5 +162,10 @@ if __name__ == '__main__':
         horse_rankings.append(_horse_ranking)
 
     # Conduct five races with non-overlapping sets of participating horses
-    first_race = race(horses, [0, 1, 2, 3, 4])
-    print(first_race)
+    for i in range(0, 24, 5):
+        race(horses, list(range(i, i+5)))
+
+    # Conduct another race using one participant of each race
+    race(horses, list(range(0, 25, 5)))
+
+    print()
